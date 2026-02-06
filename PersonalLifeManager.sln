@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalLifeManager", "PersonalLifeManager\PersonalLifeManager.csproj", "{9F16F436-402D-4288-8362-88D37CC0EE4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F16F436-402D-4288-8362-88D37CC0EE4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F16F436-402D-4288-8362-88D37CC0EE4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F16F436-402D-4288-8362-88D37CC0EE4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F16F436-402D-4288-8362-88D37CC0EE4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

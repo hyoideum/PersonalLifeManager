@@ -1,0 +1,6 @@
+@PersonalLifeManager_HostAddress = http://localhost:5237
+
+GET {{PersonalLifeManager_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
