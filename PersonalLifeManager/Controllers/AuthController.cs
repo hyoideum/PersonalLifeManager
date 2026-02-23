@@ -8,7 +8,7 @@ namespace PersonalLifeManager.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(UserManager<AppUser> userManager, ITokenService tokenService) : ControllerBase
+public class AuthController(UserManager<AppUser> userManager, ITokenService tokenService, IHabitService service) : ControllerBase
 {
     
     [HttpPost("register")]
@@ -26,6 +26,8 @@ public class AuthController(UserManager<AppUser> userManager, ITokenService toke
 
         if (!result.Succeeded)
             return BadRequest(result.Errors);
+        
+        await service.SeedDefaultHabitsAsync(user.Id);
 
         return Ok("User created");
     }

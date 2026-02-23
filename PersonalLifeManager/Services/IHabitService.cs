@@ -11,4 +11,6 @@ public interface IHabitService
     Task DeleteAsync(int id, string userId);
     Task<List<HabitDto>> GetAllIncludingDeletedAsync(string userId);
     Task RestoreAsync(int id, string userId);
+    Task SeedDefaultHabitsAsync(string userId);
+    Task<int> CountActiveAsync(string userId);
 }

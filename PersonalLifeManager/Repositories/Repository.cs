@@ -29,6 +29,12 @@ public class Repository<T>(AppDbContext context) : IRepository<T>
         await context.SaveChangesAsync();
     }
 
+    public async Task DeleteAsync(T entity)
+    {
+        DbSet.Remove(entity);
+        await SaveChangesAsync();
+    }
+
     public async Task SoftDeleteAsync(T entity)
     {
         entity.IsDeleted = true;

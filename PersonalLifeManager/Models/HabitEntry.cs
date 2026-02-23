@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PersonalLifeManager.Models;
 
-public class HabitEntry
+public class HabitEntry : ISoftDelete
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,10 +12,14 @@ public class HabitEntry
     [Required]
     public int HabitId { get; set; }
     
-    public Habit Habit { get; set; }
+    public Habit Habit { get; set; } = null!;
     
     [Required]
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
     
+    [Required]
+    public string UserId { get; set; } = null!;
+    
+    public string? Note { get; set; }
     public bool IsDeleted { get; set; }
 }

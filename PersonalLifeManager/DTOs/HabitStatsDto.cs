@@ -1,9 +1,8 @@
 namespace PersonalLifeManager.DTOs;
 
-public class DailyHabitOverviewDto
+public class HabitStatsDto
 {
     public int HabitId { get; set; }
     public string HabitName { get; set; }
-    public bool IsCompleted { get; set; }
-    public string? Note { get; set; }
+    public int CompletedCount { get; set; }
 }
