@@ -25,6 +25,7 @@ public class HabitService(IHabitRepository repository, IMapper mapper) : IHabitS
     public async Task<HabitDto> CreateAsync(string userId, CreateHabitDto dto)
     {
         var habit = mapper.Map<Habit>(dto);
+        habit.CreatedAt = DateTime.UtcNow;
         habit.UserId = userId;
 
         await repository.AddAsync(habit);

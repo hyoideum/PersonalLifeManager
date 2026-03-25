@@ -1,0 +1,55 @@
+.habits-container {
+  padding: 24px;
+}
+
+.habits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.habits-header h2 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.habit-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.habit-card {
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+mat-card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.description {
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.progress-text {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+mat-progress-bar {
+  margin-top: 6px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.today-toggle {
+  margin: 10px 0 14px 0;
+}

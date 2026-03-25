@@ -6,5 +6,5 @@ namespace PersonalLifeManager.Services;
 public interface IAuthService
 {
     Task<AppUser?> RegisterAsync(UserDto.RegisterDto dto);
-    Task<string?> LoginAsync(UserDto.LoginDto dto);
+    Task<AuthResponseDto> LoginAsync(UserDto.LoginDto dto);
 }

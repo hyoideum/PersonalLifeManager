@@ -56,10 +56,17 @@ public class HabitEntryController(IHabitEntryService service) : BaseApiControlle
     }
     
     [HttpGet("{habitId}/statistics")]
-    public async Task<ActionResult<HabitStatisticsDto>> GetStatistics(int habitId, [FromQuery] DateOnly from,
-        [FromQuery] DateOnly to)
+    public async Task<ActionResult<HabitStatisticsDto>> GetStatistics(int habitId, [FromQuery] DateOnly? from,
+        [FromQuery] DateOnly? to)
     {
         return Ok(await service.GetStatisticsAsync(habitId, UserId, from, to));
+    }
+
+    [HttpGet("statistics/all")]
+    public async Task<ActionResult<List<HabitStatisticsDto>>> GetAllStatistics([FromQuery] DateOnly? from,
+        [FromQuery] DateOnly? to)
+    {
+        return Ok(await service.GetStatisticsForAllHabitsAsync(UserId, from, to));
     }
     
     [HttpGet("statistics/global")]
@@ -85,8 +92,8 @@ public class HabitEntryController(IHabitEntryService service) : BaseApiControlle
 
         return Ok(new BestWorstHabitDto
         {
-            BestHabit = best,
-            WorstHabit = worst
+            BestHabits = best,
+            WorstHabits = worst
         });
     }
 }

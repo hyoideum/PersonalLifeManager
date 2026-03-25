@@ -1,0 +1,80 @@
+<!-- <div class="auth-form">
+  <h2>{{ i18n.get('login.register')}}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <label>{{ i18n.get('login.username')}}</label>
+    <input type="text" formControlName="username" />
+    @if(getFieldError('username')) {
+    <p class="error">{{ getFieldError('username') }}</p>
+    }
+
+    <label>{{ i18n.get('login.password')}}</label>
+    <input type="password" formControlName="password" />
+    @if(getFieldError('password')) {
+    <p class="error">{{ getFieldError('password') }}</p>
+    }
+
+    <label>{{ i18n.get('login.confirmPassword')}}</label>
+    <input type="password" formControlName="confirmPassword" />
+    @if (getFieldError('confirmPassword')) {
+    <p class="error">{{ getFieldError('confirmPassword') }}</p>
+    }
+
+    <button type="submit" [disabled]="form.invalid">{{ i18n.get('login.register')}}</button>
+
+  </form>
+</div> -->
+
+
+<h2 class="auth-title">{{ i18n.get('login.register') }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.firstName') }}</mat-label>
+    <input matInput type="text" formControlName="firstName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.lastName') }}</mat-label>
+    <input matInput type="text" formControlName="lastName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.email') }}</mat-label>
+    <input matInput type="text" formControlName="email" />
+  </mat-form-field>
+
+
+
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.username') }}</mat-label>
+    <input matInput type="text" formControlName="username" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.password') }}</mat-label>
+    <input matInput type="password" formControlName="password" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.confirmPassword') }}</mat-label>
+    <input matInput type="password" formControlName="confirmPassword" />
+  </mat-form-field>
+
+   @if (errorMessage) {
+  <mat-error>{{ errorMessage }}</mat-error>
+  }
+
+  <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="form.invalid">
+    {{ i18n.get('login.register') }}
+  </button>
+
+  <p class="auth-switch">
+    {{ i18n.get('login.haveAccount') }}
+    <a [routerLink]="['auth/login']">{{ i18n.get('login.login') }}</a>
+  </p>
+
+</form>

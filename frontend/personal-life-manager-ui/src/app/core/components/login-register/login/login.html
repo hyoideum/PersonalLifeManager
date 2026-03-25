@@ -1,0 +1,29 @@
+<h2 class="auth-title">{{ i18n.get('login.login') }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.username') }}</mat-label>
+    <input matInput type="text" formControlName="username" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ i18n.get('login.password') }}</mat-label>
+    <input matInput type="password" formControlName="password" />
+
+  </mat-form-field>
+
+  @if (errorMessage) {
+  <mat-error>{{ errorMessage }}</mat-error>
+  }
+
+  <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="form.invalid">
+    {{ i18n.get('login.login') }}
+  </button>
+
+  <p class="auth-switch">
+    {{ i18n.get('login.noAccount') }}
+    <a [routerLink]="['/auth/register']">{{ i18n.get('login.register') }}</a>
+  </p>
+
+</form>

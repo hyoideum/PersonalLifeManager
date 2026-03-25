@@ -10,5 +10,5 @@ public class GlobalStatisticsDto
     public int TotalCompletions { get; set; }
 
     public double AveragePerDay { get; set; }
-    public double CompletionRate { get; set; } // 0–100
+    public double CompletionRate { get; set; }
 }

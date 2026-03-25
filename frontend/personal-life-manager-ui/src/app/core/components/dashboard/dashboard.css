@@ -1,0 +1,18 @@
+.dashboard-container {
+  padding: 24px;
+}
+
+.card {
+  margin-bottom: 24px;
+}
+
+.habit-stats {
+  display: flex;
+  gap: 24px;        /* razmak između Best i Worst */
+  flex-wrap: wrap;  /* da se lijepo prelama na manjim ekranima */
+}
+
+.habit-stats .card {
+  flex: 1;          /* da zauzmu jednaku širinu */
+  min-width: 280px; /* da ne postanu premale */
+}

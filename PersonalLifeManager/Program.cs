@@ -7,11 +7,23 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using PersonalLifeManager.Data.Seed;
+using PersonalLifeManager.Events;
+using PersonalLifeManager.Handlers;
 using PersonalLifeManager.Middleware;
 using PersonalLifeManager.Repositories;
 using PersonalLifeManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy => policy
+            // .WithOrigins("http://localhost:4200")
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -28,7 +40,7 @@ builder.Services.AddAuthentication(options =>
     .AddJwtBearer(options =>
     {
         var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty);
-
+        
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -45,8 +57,13 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHabitService, HabitService>();
 builder.Services.AddScoped<IHabitRepository, HabitRepository>();
 builder.Services.AddScoped<IHabitEntryRepository, HabitEntryRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository> ();
 builder.Services.AddScoped<IHabitEntryService, HabitEntryService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
+builder.Services.AddScoped<IEventHandler<UserRegisteredEvent>, UserRegisteredHandler>();
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAuthentication();
@@ -83,6 +100,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
+
 var app = builder.Build();
 
 app.UseRouting();
@@ -90,6 +116,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseCors("AllowAngular");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

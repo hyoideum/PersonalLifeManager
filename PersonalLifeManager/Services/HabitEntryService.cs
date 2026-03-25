@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using AutoMapper;
 using PersonalLifeManager.DTOs;
 using PersonalLifeManager.Exceptions;
@@ -160,15 +161,27 @@ public class HabitEntryService(IHabitEntryRepository repository, IHabitRepositor
         };
     }
 
-    public async Task<HabitStatisticsDto> GetStatisticsAsync(int habitId, string userId, DateOnly from, DateOnly to)
+    public async Task<HabitStatisticsDto> GetStatisticsAsync(int habitId, string userId, DateOnly? from, DateOnly? to)
     {
+        
+        var habit = await habitRepository.GetByIdAsync(habitId, userId);
+
+        if (habit == null)
+            throw new HabitNotFoundException();
+        
         if (from > to)
             throw new FromToDateException();
 
-        var completedDates =
-            await repository.GetCompletedDatesAsync(habitId, userId, from, to);
+        var start = from ?? DateOnly.FromDateTime(habit.CreatedAt);
+        var end = to ?? DateOnly.FromDateTime(DateTime.UtcNow);
+        
+        if (start < DateOnly.FromDateTime(habit.CreatedAt))
+            start = DateOnly.FromDateTime(habit.CreatedAt);
 
-        var totalDays = to.DayNumber - from.DayNumber + 1;
+        var completedDates =
+            await repository.GetCompletedDatesAsync(habitId, userId, start, end);
+
+        var totalDays = start.DayNumber - end.DayNumber + 1;
         var completedDays = completedDates.Count;
 
         var completionRate =
@@ -179,14 +192,66 @@ public class HabitEntryService(IHabitEntryRepository repository, IHabitRepositor
         return new HabitStatisticsDto
         {
             HabitId = habitId,
-            From = from,
-            To = to,
+            Name = habit.Name,
+            From = start,
+            To = end,
             TotalDays = totalDays,
             CompletedDays = completedDays,
             CompletionRate = completionRate
         };
     }
-    
+
+    public async Task<List<HabitStatisticsDto>> GetStatisticsForAllHabitsAsync(string userId, DateOnly? from, DateOnly? to)
+    {
+        var habits = await habitRepository.GetAllAsync(userId);
+        var dailyOverview = await GetDailyOverviewAsync(userId, DateOnly.FromDateTime(DateTime.UtcNow));
+        var result = new List<HabitStatisticsDto>();
+        
+        var todayStatus = dailyOverview.ToDictionary(x => x.HabitId, x => x.IsCompleted);
+        
+        foreach (var habit in habits)
+        {
+            var start = from ?? DateOnly.FromDateTime(habit.CreatedAt);
+            var end = to ?? DateOnly.FromDateTime(DateTime.UtcNow);
+
+            var createdDate = DateOnly.FromDateTime(habit.CreatedAt);
+
+            if (start < createdDate)
+                start = createdDate;
+
+            if (start > end)
+                continue;
+
+            var completedDates =
+                await repository.GetCompletedDatesAsync(habit.Id, userId, start, end);
+
+            var totalDays = end.DayNumber - start.DayNumber + 1;
+            var completedDays = completedDates.Count;
+
+            var completionRate =
+                totalDays == 0
+                    ? 0
+                    : Math.Round((double)completedDays / totalDays * 100, 2);
+            
+            var isCompletedToday = todayStatus.ContainsKey(habit.Id) && todayStatus[habit.Id];
+
+            result.Add(new HabitStatisticsDto
+            {
+                HabitId = habit.Id,
+                Name = habit.Name,
+                Description = habit.Description,
+                From = start,
+                To = end,
+                TotalDays = totalDays,
+                CompletedDays = completedDays,
+                CompletionRate = completionRate,
+                CompletedToday = isCompletedToday
+            });
+        }
+
+        return result;
+    }
+
     public async Task<GlobalStatisticsDto> GetGlobalStatisticsAsync(string userId, DateOnly from, DateOnly to)
     {
         if (from > to)
@@ -248,7 +313,7 @@ public class HabitEntryService(IHabitEntryRepository repository, IHabitRepositor
         return result;
     }
 
-    public async Task<(HabitStatsDto? Best, HabitStatsDto? Worst)> GetBestAndWorstHabitAsync(string userId,
+    public async Task<(List<HabitStatsDto>? Best, List<HabitStatsDto>? Worst)> GetBestAndWorstHabitAsync(string userId,
         DateOnly from, DateOnly to)
     {
         if (from > to)
@@ -258,16 +323,22 @@ public class HabitEntryService(IHabitEntryRepository repository, IHabitRepositor
 
         if (stats.Count == 0)
             return (null, null);
+        
+        var maxCompleted = stats.Max(h => h.CompletedCount);
+        var minCompleted = stats.Min(h => h.CompletedCount);
+        
+        if (maxCompleted == 0)
+            return (null, null);
+        
+        var bestHabits = stats
+            .Where(h => h.CompletedCount == maxCompleted)
+            .ToList();
 
-        var best = stats
-            .OrderByDescending(h => h.CompletedCount)
-            .First();
+        var worstHabits = stats
+            .Where(h => h.CompletedCount == minCompleted)
+            .ToList();
 
-        var worst = stats
-            .OrderBy(h => h.CompletedCount)
-            .First();
-
-        return (best, worst);
+        return (bestHabits, worstHabits);
     }
 
     public async Task<int> CountCompletedForDayAsync(string userId, DateOnly date)

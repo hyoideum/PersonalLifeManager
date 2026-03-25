@@ -16,7 +16,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         builder.Entity<HabitEntry>()
             .HasIndex(e => new { e.UserId, e.HabitId, e.Date })
             .IsUnique();
+        
+        builder.Entity<RefreshToken>().HasIndex(t => t.Token).IsUnique();
+        base.OnModelCreating(builder);
     }
     public DbSet<Habit> Habits { get; set; }
     public DbSet<HabitEntry> HabitEntries { get; set; }
+    
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 }

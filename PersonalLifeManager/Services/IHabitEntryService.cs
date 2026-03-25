@@ -12,10 +12,11 @@ public interface IHabitEntryService
     Task<HabitEntryDto> ToggleAsync(int habitId, DateOnly date, string userId);
     Task<List<DailyHabitOverviewDto>> GetDailyOverviewAsync(string userId, DateOnly date);
     Task<HabitStreakDto> GetStreakAsync(int habitId, string userId);
-    Task<HabitStatisticsDto> GetStatisticsAsync(int habitId, string userId, DateOnly from, DateOnly to);
+    Task<HabitStatisticsDto> GetStatisticsAsync(int habitId, string userId, DateOnly? from, DateOnly? to);
+    Task<List<HabitStatisticsDto>> GetStatisticsForAllHabitsAsync(string userId, DateOnly? from, DateOnly? to);
     Task<GlobalStatisticsDto> GetGlobalStatisticsAsync(string userId, DateOnly from, DateOnly to);
     Task<List<CalendarHeatmapDto>> GetHeatmapAsync(string userId, DateOnly from, DateOnly to);
-    Task<(HabitStatsDto? Best, HabitStatsDto? Worst)> GetBestAndWorstHabitAsync(string userId, DateOnly from, DateOnly to);
+    Task<(List<HabitStatsDto>? Best, List<HabitStatsDto>? Worst)> GetBestAndWorstHabitAsync(string userId, DateOnly from, DateOnly to);
     Task<int> CountCompletedForDayAsync(string userId, DateOnly date);
     Task<int> GetCurrentStreakAsync(string userId, DateOnly today);
 }

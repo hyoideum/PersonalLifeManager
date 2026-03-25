@@ -1,0 +1,33 @@
+.layout-container {
+  height: 100vh;
+}
+
+.content {
+  padding: 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.logo {
+  padding: 16px;
+  font-weight: bold;
+}
+
+mat-sidenav {
+  width: 220px;
+  display: flex;
+  flex-direction: column; /* stavlja djecu jedno ispod drugog */
+  padding: 16px;
+  gap: 12px; /* razmak između dugmadi */
+}
+
+mat-sidenav .logo {
+  margin-bottom: 24px;
+}
+
+mat-sidenav button {
+  justify-content: flex-start; /* ikona + tekst lijevo */
+  text-align: left;
+}

@@ -1,0 +1,68 @@
+<div class="habits-container">
+    <div class="habits-header">
+        <h2> 🏃 My Habits</h2>
+        <!--
+    <button mat-raised-button color="primary" (click)="addHabit()">
+      Add Habit
+    </button>
+    -->
+    </div>
+    <div class="habit-list">
+        @for (habit of habitsWithStatistics(); track $index) {
+        <mat-card class="habit-card">
+            <mat-card-header>
+                <mat-card-title>{{ habit.name }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p class="description">{{ habit.description }}</p>
+                <div class="today-toggle">
+                    <mat-checkbox [checked]="habit.completedToday" (change)="toggleToday(habit)">
+                        Completed today
+                    </mat-checkbox>
+                </div>
+                <p class="progress-text">
+                    Progress: {{ habit.completedDays }} / {{ habit.totalDays }} ({{ habit.completionRate }}%)
+                </p>
+                <mat-progress-bar mode="determinate" [value]="habit.completionRate"></mat-progress-bar>
+            </mat-card-content>
+            <mat-card-actions class="actions">
+                <button mat-button color="primary" (click)="editHabit(habit)">
+                    Edit
+                </button>
+                <button mat-button color="warn" (click)="deleteHabit(habit)">
+                    Delete
+                </button>
+            </mat-card-actions>
+        </mat-card>
+        }
+    </div>
+</div>
+
+<!-- <div class="habit-list">
+  @for (habit of habitsWithStatistics(); track habit.habitId) {
+    <mat-card class="habit-card">
+      <mat-card-header>
+        <mat-checkbox [checked]="habit.completedToday"(change)="toggleToday(habit)">
+        </mat-checkbox>
+        <mat-card-title>{{ habit.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="description">
+          {{ habit.description }}
+        </p>
+        <p class="progress-text">
+          {{ habit.completedDays }} / {{ habit.totalDays }}
+          ({{ habit.completionRate }}%)
+        </p>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="habit.completionRate">
+        </mat-progress-bar>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="editHabit(habit)">Edit</button>
+        <button mat-button color="warn" (click)="deleteHabit(habit)">Delete</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div> -->

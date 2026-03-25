@@ -1,11 +1,15 @@
+using System.Runtime.InteropServices.JavaScript;
 using PersonalLifeManager.DTOs;
 
 namespace PersonalLifeManager.Services;
 
 public class DashboardService (IHabitService habitService, IHabitEntryService habitEntryService) : IDashboardService
 {
-    public async Task<DashboardDto> GetDashboardAsync(string userId, DateOnly from, DateOnly to)
+    public async Task<DashboardDto> GetDashboardAsync(string userId, DateOnly fromDate, DateOnly toDate)
     {
+        var to = toDate ==  DateOnly.MinValue ? DateOnly.FromDateTime(DateTime.UtcNow) : toDate;
+        var from = fromDate == DateOnly.MinValue ? to.AddDays(-30) : fromDate;
+        
         var globalStats =
             await habitEntryService.GetGlobalStatisticsAsync(userId, from, to);
 
@@ -26,8 +30,8 @@ public class DashboardService (IHabitService habitService, IHabitEntryService ha
         return new DashboardDto
         {
             GlobalStatistics = globalStats,
-            BestHabit = best,
-            WorstHabit = worst,
+            BestHabits = best,
+            WorstHabits = worst,
             TodayCompleted = todayCompleted,
             TotalHabits = totalHabits,
             CurrentStreak = currentStreak

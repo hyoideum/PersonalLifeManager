@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PersonalLifeManager.Models;
+using PersonalLifeManager.DTOs;
 using PersonalLifeManager.Services;
 using static PersonalLifeManager.DTOs.UserDto;
 
@@ -8,45 +7,47 @@ namespace PersonalLifeManager.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(UserManager<AppUser> userManager, ITokenService tokenService, IHabitService service) : ControllerBase
+public class AuthController(AuthService authService) : ControllerBase
 {
-    
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto userDto)
     {
-        var user = new AppUser
-        {
-            UserName = userDto.Username,
-            Email = userDto.Email,
-            FirstName = userDto.FirstName,
-            LastName = userDto.LastName,
-        };
-
-        var result = await userManager.CreateAsync(user, userDto.Password);
-
-        if (!result.Succeeded)
-            return BadRequest(result.Errors);
-        
-        await service.SeedDefaultHabitsAsync(user.Id);
-
-        return Ok("User created");
+        return Ok(await authService.RegisterAsync(userDto));
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto userDto)
     {
-        var user = await userManager.FindByNameAsync(userDto.Username);
-
-        if (user == null)
+        try
+        {
+            var response = await authService.LoginAsync(userDto);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException)
+        {
             return Unauthorized();
-
-        var validPassword = await userManager.CheckPasswordAsync(user, userDto.Password);
-
-        if (!validPassword)
+        }
+    }
+    
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] RefreshRequest req)
+    {
+        try
+        {
+            var response = await authService.RefreshTokenAsync(req);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException)
+        {
             return Unauthorized();
+        }
         
-        var token = tokenService.CreateToken(user);
-
-        return Ok(token);
+    }
+    
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] RefreshRequest req)
+    {
+        await authService.LogoutAsync(req);
+        return Ok();
     }
 }

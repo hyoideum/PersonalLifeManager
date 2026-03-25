@@ -1,0 +1,58 @@
+<mat-sidenav-container class="layout-container">
+
+  <mat-sidenav mode="side" opened>
+    <h3 class="logo">{{ i18n.get('titles.maintitle')}}</h3>
+
+    <button mat-button [routerLink]="'/dashboard'">
+      <mat-icon>dashboard</mat-icon>
+      {{ i18n.get('titles.dashboard')}}
+    </button>
+
+    <button mat-button [routerLink]="'/habits'">
+      <mat-icon>list</mat-icon>
+      {{ i18n.get('titles.habits')}}
+    </button>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <span>{{ i18n.get('titles.maintitle')}}</span>
+
+      <span class="spacer"></span>
+
+      @if(auth.isLoggedIn()) {
+      <button mat-button (click)="logout()">
+        {{ i18n.get('login.logout')}}
+      </button>
+      } @else {
+      <button type="button" mat-button routerLink="auth/login">
+        {{ i18n.get('login.login')}}
+      </button>
+
+      <button mat-button routerLink="auth/register">
+        {{ i18n.get('login.register')}}
+      </button>
+      }
+
+      <button mat-icon-button [matMenuTriggerFor]="langMenu">
+        <mat-icon>language</mat-icon>
+      </button>
+
+      <mat-menu #langMenu="matMenu">
+        <button mat-menu-item (click)="changeLanguage('en')">
+          {{ i18n.get('layout.english') }}
+        </button>
+        <button mat-menu-item (click)="changeLanguage('hr')">
+          {{ i18n.get('layout.croatian') }}
+        </button>
+      </mat-menu>
+
+    </mat-toolbar>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

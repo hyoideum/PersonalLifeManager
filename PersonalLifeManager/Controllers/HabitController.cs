@@ -50,9 +50,9 @@ public class HabitController(IHabitService service) : BaseApiController
     }
     
     [HttpGet("all")]
-    public async Task<ActionResult<List<HabitDto>>> GetAllIncludeDeleted(string userId)
+    public async Task<ActionResult<List<HabitDto>>> GetAllIncludeDeleted()
     {
-        return await service.GetAllIncludingDeletedAsync(userId);
+        return await service.GetAllIncludingDeletedAsync(UserId);
     }
     
     [HttpPut("restore/{id}")]

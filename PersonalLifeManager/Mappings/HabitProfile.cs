@@ -8,7 +8,8 @@ public class HabitProfile : Profile
 {
     public HabitProfile()
     {
-        CreateMap<Habit, HabitDto>();
+        CreateMap<Habit, HabitDto>().ForMember(dest => dest.CreatedAt,
+            opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedAt)));
 
         CreateMap<CreateHabitDto, Habit>();
 

@@ -1,0 +1,18 @@
+.habit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-dialog-content {
+  min-width: 320px;
+}
+
+mat-dialog-actions {
+  margin-top: 10px;
+}

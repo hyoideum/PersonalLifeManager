@@ -1,0 +1,63 @@
+<div class="dashboard-container">
+    @if(dashboard()) {
+
+    <h2>{{ i18n.get('titles.dashboard') }}</h2>
+
+    <!-- Global Statistics -->
+    <mat-card class="card">
+        <mat-card-title>🌍 {{ i18n.get('dashboard.globalStatistics') }}</mat-card-title>
+        <mat-card-content>
+            <p>{{ i18n.get('dashboard.period') }} {{ dashboard()?.globalStatistics?.from }} - {{ dashboard()?.globalStatistics?.to }}</p>
+            <p>{{ i18n.get('dashboard.totalDays') }} {{ dashboard()?.globalStatistics?.totalDays }}</p>
+            <p>{{ i18n.get('dashboard.totalHabits') }} {{ dashboard()?.globalStatistics?.totalHabits }}</p>
+            <p>{{ i18n.get('dashboard.totalCompletions') }} {{ dashboard()?.globalStatistics?.totalCompletions }}</p>
+            <p>{{ i18n.get('dashboard.avgPerDay') }} {{ dashboard()?.globalStatistics?.averagePerDay | number:'1.1-2' }}</p>
+            <p>{{ i18n.get('dashboard.competitionRate') }} {{ dashboard()?.globalStatistics?.completionRate }}%</p>
+        </mat-card-content>
+    </mat-card>
+    }
+
+    <!-- Best & Worst Habit -->
+    <div class="habit-stats">
+        <mat-card class="card">
+            <mat-card-title>🏆 {{ i18n.get('dashboard.bestHabits') }}</mat-card-title>
+            <mat-card-content>
+
+                <ng-container>
+                    @if(dashboard()?.bestHabits) {
+                    @for(habit of dashboard()?.bestHabits; track habit.habitName) {
+                    <p>{{ habit.habitName }} ({{ i18n.get('dashboard.completed') }} {{ habit.completedCount }})</p>
+                    }
+                    } @else {
+                    <p>{{ i18n.get('dashboard.noData') }}</p>
+                    }
+                </ng-container>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card class="card">
+            <mat-card-title>📉 {{ i18n.get('dashboard.worstHabits') }}</mat-card-title>
+            <mat-card-content>
+                <ng-container>
+                    @if(dashboard()?.worstHabits) {
+                    @for (habit of dashboard()?.worstHabits; track habit.habitName) {
+                    <p>{{ habit.habitName }} ({{ i18n.get('dashboard.completed') }} {{ habit.completedCount }})</p>
+                    }
+                    } @else {
+                    <p>{{ i18n.get('dashboard.noData') }}</p>
+                    }
+                </ng-container>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Quick Stats -->
+    <mat-card class="card">
+        <mat-card-title>🔥 {{ i18n.get('dashboard.quickStats') }} </mat-card-title>
+        <mat-card-content class="quick-stats">
+            <p>{{ i18n.get('dashboard.todayCompleted') }} {{ dashboard()?.todayCompleted }}</p>
+            <p>{{ i18n.get('dashboard.totalHabits') }} {{ dashboard()?.totalHabits }}</p>
+            <p>{{ i18n.get('dashboard.currentStreak') }} {{ dashboard()?.currentStreak }}</p>
+        </mat-card-content>
+    </mat-card>
+</div>
