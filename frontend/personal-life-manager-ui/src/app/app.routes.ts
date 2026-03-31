@@ -4,7 +4,6 @@ import { MainLayout } from './core/layouts/main-layout/main-layout';
 import { AuthLayout } from './core/layouts/auth-layout/auth-layout';
 
 export const routes: Routes = [
-
   {
     path: 'auth',
     component: AuthLayout,
@@ -48,15 +47,8 @@ export const routes: Routes = [
       }
     ]
   },
-
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
-  },
-
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: 'auth/login'
   }
 ];

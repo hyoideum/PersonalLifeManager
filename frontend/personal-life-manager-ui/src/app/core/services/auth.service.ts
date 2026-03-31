@@ -28,9 +28,8 @@ export class AuthService {
   currentUser = signal<string | null>(null);
   isBrowser = false;
   private logoutTimer: any;
-  private isRefreshing = false;
 
-  constructor(private http: HttpClient, private router: Router, @Inject(PLATFORM_ID) platformId: Object) {
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId)
 
     if (this.isBrowser) {
@@ -44,6 +43,7 @@ export class AuthService {
   }
 
   get token(): string | null {
+    return this.currentUser();
     if (!this.isBrowser) return null;
     return localStorage.getItem(this.TOKEN_KEY);
   }
@@ -60,7 +60,7 @@ export class AuthService {
           this.currentUser.set(response.accessToken);
           localStorage.setItem(this.REFRESH_KEY, response.refreshToken);
           this.startAutoRefresh(response.accessToken);
-          this.router.navigate(['/dashboard']);
+          // this.router.navigate(['/dashboard']);
         }
       })
     );
@@ -76,20 +76,16 @@ export class AuthService {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.REFRESH_KEY);
     }
-    this.router.navigate(['auth/login']);
+    // this.router.navigate(['auth/login']);
   }
 
   isLoggedIn(): boolean {
-    const token = this.token;
-    if (!token) return false;
+    if (!this.isBrowser) return false;
 
-    return !this.isTokenExpired(token);
+    const token = localStorage.getItem(this.TOKEN_KEY);
+
+    return !!token;
   }
-
-  // private clearToken(): void {
-  //   if (!this.isBrowser) return;
-  //   localStorage.removeItem('token');
-  // }
 
   isTokenExpired(token: string): boolean {
     try {
@@ -129,26 +125,6 @@ export class AuthService {
       });
     }, refreshTime);
   }
-
-  // refreshToken(): Observable<RefreshResponse> {
-  //   if (!this.isBrowser) return of({ accessToken: '' }); // fallback
-
-  //   const refreshToken = localStorage.getItem('refreshToken');
-  //   if (!refreshToken) return throwError(() => new Error('No refresh token'));
-
-  //   return this.http.post<RefreshResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
-  //     tap(res => {
-  //       if (res.accessToken) {
-  //         this.setToken(res.accessToken);
-  //         this.currentUser.set(res.accessToken);
-  //       }
-  //       if (res.refreshToken) {
-  //         localStorage.setItem('refreshToken', res.refreshToken);
-  //       }
-  //       this.startAutoLogout(res.accessToken); // reset timer
-  //     })
-  //   );
-  // }
 
   refreshToken(): Observable<RefreshResponse> {
     const refreshToken = localStorage.getItem(this.REFRESH_KEY);

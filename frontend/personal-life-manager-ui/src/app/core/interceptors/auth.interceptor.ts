@@ -23,17 +23,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // return next(clonedReq).pipe(
-  //   catchError((error) => {
-
-  //     if ((error.status === 401 || error.status === 403) && token) {
-  //       authService.logout();
-  //     }
-  //     return throwError(() => error);
-  //   })
-  // );
-
-
   return next(clonedReq).pipe(
     catchError((error) => {
 
