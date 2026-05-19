@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { HabitStatistics } from '../../../models/habit.statistics.model';
 import { Habit } from '../../../models/habit.model';
+import { I18nService } from '../../../services/i18n.service';
 
 @Component({
   selector: 'app-habit-form',
@@ -20,7 +21,7 @@ export class HabitFormComponent {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, public i18n: I18nService) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['']

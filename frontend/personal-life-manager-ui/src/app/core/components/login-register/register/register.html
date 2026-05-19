@@ -1,32 +1,3 @@
-<!-- <div class="auth-form">
-  <h2>{{ i18n.get('login.register')}}</h2>
-
-  <form [formGroup]="form" (ngSubmit)="submit()">
-
-    <label>{{ i18n.get('login.username')}}</label>
-    <input type="text" formControlName="username" />
-    @if(getFieldError('username')) {
-    <p class="error">{{ getFieldError('username') }}</p>
-    }
-
-    <label>{{ i18n.get('login.password')}}</label>
-    <input type="password" formControlName="password" />
-    @if(getFieldError('password')) {
-    <p class="error">{{ getFieldError('password') }}</p>
-    }
-
-    <label>{{ i18n.get('login.confirmPassword')}}</label>
-    <input type="password" formControlName="confirmPassword" />
-    @if (getFieldError('confirmPassword')) {
-    <p class="error">{{ getFieldError('confirmPassword') }}</p>
-    }
-
-    <button type="submit" [disabled]="form.invalid">{{ i18n.get('login.register')}}</button>
-
-  </form>
-</div> -->
-
-
 <h2 class="auth-title">{{ i18n.get('login.register') }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
@@ -46,9 +17,6 @@
     <input matInput type="text" formControlName="email" />
   </mat-form-field>
 
-
-
-
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{ i18n.get('login.username') }}</mat-label>
     <input matInput type="text" formControlName="username" />
@@ -57,14 +25,24 @@
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{ i18n.get('login.password') }}</mat-label>
     <input matInput type="password" formControlName="password" />
+    @if (form.get('password')?.invalid && form.get('password')?.touched) {
+    <mat-error>
+      {{ getFieldError('password') }}
+    </mat-error>
+  }
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{ i18n.get('login.confirmPassword') }}</mat-label>
     <input matInput type="password" formControlName="confirmPassword" />
+    @if (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) {
+    <mat-error>
+      {{ getFieldError('confirmPassword') }}
+    </mat-error>
+    }
   </mat-form-field>
 
-   @if (errorMessage) {
+  @if (errorMessage) {
   <mat-error>{{ errorMessage }}</mat-error>
   }
 

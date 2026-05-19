@@ -63,10 +63,10 @@ public class HabitEntryController(IHabitEntryService service) : BaseApiControlle
     }
 
     [HttpGet("statistics/all")]
-    public async Task<ActionResult<List<HabitStatisticsDto>>> GetAllStatistics([FromQuery] DateOnly? from,
+    public async Task<ActionResult<List<HabitStatisticsDto>>> GetAllStatistics([FromQuery] DateOnly? day, [FromQuery] DateOnly? from,
         [FromQuery] DateOnly? to)
     {
-        return Ok(await service.GetStatisticsForAllHabitsAsync(UserId, from, to));
+        return Ok(await service.GetStatisticsForAllHabitsAsync(UserId, from, to, day));
     }
     
     [HttpGet("statistics/global")]

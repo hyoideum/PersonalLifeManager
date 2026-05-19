@@ -2,14 +2,13 @@ using Microsoft.AspNetCore.Identity;
 using PersonalLifeManager.DTOs;
 using PersonalLifeManager.Events;
 using PersonalLifeManager.Models;
-using PersonalLifeManager.Repositories;
 
 namespace PersonalLifeManager.Services;
 
-public class AuthService(UserManager<AppUser> userManager, IHabitService habitService, IRefreshTokenService refreshTokenService, ITokenService tokenService,
+public class AuthService(UserManager<AppUser> userManager, IRefreshTokenService refreshTokenService, ITokenService tokenService,
     IEventDispatcher eventDispatcher) : IAuthService
 {
-    public async Task<AppUser?> RegisterAsync(UserDto.RegisterDto dto)
+    public async Task<(AppUser?, IEnumerable<string> Errors)> RegisterAsync(UserDto.RegisterDto dto)
     {
         var user = new AppUser
         {
@@ -22,11 +21,14 @@ public class AuthService(UserManager<AppUser> userManager, IHabitService habitSe
         var result = await userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
-            throw new Exception(result.Errors.First().Description);
+        {
+            var errors = result.Errors.Select(e => e.Description);
+            return (null, errors);
+        }
         
         await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
 
-        return user;
+        return (user, Enumerable.Empty<string>());
     }
 
     public async Task<AuthResponseDto> LoginAsync(UserDto.LoginDto userDto)
@@ -35,11 +37,6 @@ public class AuthService(UserManager<AppUser> userManager, IHabitService habitSe
 
         if (user == null || !await userManager.CheckPasswordAsync(user, userDto.Password))
             throw new UnauthorizedAccessException("Invalid credentials");
-
-        // var validPassword = await userManager.CheckPasswordAsync(user, userDto.Password);
-        //
-        // if (!validPassword)
-        //     throw new UnauthorizedAccessException("Invalid credentials");
         
         var token = tokenService.CreateToken(user);
         var refreshToken = await refreshTokenService.CreateAsync(user.Id);

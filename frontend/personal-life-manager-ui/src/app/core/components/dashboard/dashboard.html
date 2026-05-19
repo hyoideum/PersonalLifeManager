@@ -1,24 +1,47 @@
+@if (loading()) {
+
+<div class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+}
+@else {
 <div class="dashboard-container">
     @if(dashboard()) {
 
     <h2>{{ i18n.get('titles.dashboard') }}</h2>
 
+    <app-heatmap [data]="dashboard()?.heatmap ?? []" (dashboardRefresh)="reloadDashboard()">
+    </app-heatmap>
+
     <!-- Global Statistics -->
     <mat-card class="card">
         <mat-card-title>🌍 {{ i18n.get('dashboard.globalStatistics') }}</mat-card-title>
         <mat-card-content>
-            <p>{{ i18n.get('dashboard.period') }} {{ dashboard()?.globalStatistics?.from }} - {{ dashboard()?.globalStatistics?.to }}</p>
+            <p>{{ i18n.get('dashboard.period') }} {{ dashboard()?.globalStatistics?.from }} - {{
+                dashboard()?.globalStatistics?.to }}</p>
             <p>{{ i18n.get('dashboard.totalDays') }} {{ dashboard()?.globalStatistics?.totalDays }}</p>
             <p>{{ i18n.get('dashboard.totalHabits') }} {{ dashboard()?.globalStatistics?.totalHabits }}</p>
             <p>{{ i18n.get('dashboard.totalCompletions') }} {{ dashboard()?.globalStatistics?.totalCompletions }}</p>
-            <p>{{ i18n.get('dashboard.avgPerDay') }} {{ dashboard()?.globalStatistics?.averagePerDay | number:'1.1-2' }}</p>
+            <p>{{ i18n.get('dashboard.avgPerDay') }} {{ dashboard()?.globalStatistics?.averagePerDay | number:'1.1-2' }}
+            </p>
             <p>{{ i18n.get('dashboard.competitionRate') }} {{ dashboard()?.globalStatistics?.completionRate }}%</p>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card">
+        <mat-card-title>📊 {{ i18n.get('dashboard.weeklyAnalitics') }}</mat-card-title>
+
+        <mat-card-content>
+            <p>{{ i18n.get('dashboard.completion') }}: {{ dashboard()?.weeklyAnalytics?.completionRate }}%</p>
+            <p>{{ i18n.get('dashboard.trend') }}: {{ dashboard()?.weeklyAnalytics?.trend }}%</p>
+            <p>{{ i18n.get('dashboard.bestDay') }}: {{ dashboard()?.weeklyAnalytics?.bestDay }}</p>
         </mat-card-content>
     </mat-card>
     }
 
     <!-- Best & Worst Habit -->
-    <div class="habit-stats">
+    <section class="habit-stats">
         <mat-card class="card">
             <mat-card-title>🏆 {{ i18n.get('dashboard.bestHabits') }}</mat-card-title>
             <mat-card-content>
@@ -26,7 +49,7 @@
                 <ng-container>
                     @if(dashboard()?.bestHabits) {
                     @for(habit of dashboard()?.bestHabits; track habit.habitName) {
-                    <p>{{ habit.habitName }} ({{ i18n.get('dashboard.completed') }} {{ habit.completedCount }})</p>
+                    <p>{{ habit.habitName }} ({{ i18n.get('dashboard.completed') }}: {{ habit.completedCount }})</p>
                     }
                     } @else {
                     <p>{{ i18n.get('dashboard.noData') }}</p>
@@ -41,7 +64,7 @@
                 <ng-container>
                     @if(dashboard()?.worstHabits) {
                     @for (habit of dashboard()?.worstHabits; track habit.habitName) {
-                    <p>{{ habit.habitName }} ({{ i18n.get('dashboard.completed') }} {{ habit.completedCount }})</p>
+                    <p>{{ habit.habitName }} ({{ i18n.get('dashboard.completed') }}: {{ habit.completedCount }})</p>
                     }
                     } @else {
                     <p>{{ i18n.get('dashboard.noData') }}</p>
@@ -49,7 +72,30 @@
                 </ng-container>
             </mat-card-content>
         </mat-card>
-    </div>
+    </section>
+
+    <!-- Most Consistent Habit -->
+    <section class="habit-stats">
+        <mat-card class="card">
+            <mat-card-title>
+                🎯 {{ i18n.get('dashboard.mostConsistentHabit') }}
+            </mat-card-title>
+            <mat-card-content>
+                @if(dashboard()?.mostConsistentHabit) {
+                <p>{{ dashboard()?.mostConsistentHabit?.habitName }}</p>
+                <p>{{ i18n.get('dashboard.consistancyRate') }}: {{ dashboard()?.mostConsistentHabit?.consistencyRate }}%
+                </p>
+                <p>{{ i18n.get('dashboard.completed') }}: {{ dashboard()?.mostConsistentHabit?.completedDays }}
+                    /
+                    {{ dashboard()?.mostConsistentHabit?.totalDays }}</p>
+                }
+                @else {
+                <p>{{ i18n.get('dashboard.noData') }}</p>
+                }
+
+            </mat-card-content>
+        </mat-card>
+    </section>
 
     <!-- Quick Stats -->
     <mat-card class="card">
@@ -58,6 +104,8 @@
             <p>{{ i18n.get('dashboard.todayCompleted') }} {{ dashboard()?.todayCompleted }}</p>
             <p>{{ i18n.get('dashboard.totalHabits') }} {{ dashboard()?.totalHabits }}</p>
             <p>{{ i18n.get('dashboard.currentStreak') }} {{ dashboard()?.currentStreak }}</p>
+            <p>{{ i18n.get('dashboard.longestStreak') }} {{ dashboard()?.longestStreak }}</p>
         </mat-card-content>
     </mat-card>
 </div>
+}

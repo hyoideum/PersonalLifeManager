@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { I18nService } from '../../../services/i18n.service';
 import { Router, RouterModule } from '@angular/router';
@@ -8,6 +8,15 @@ import Swal from 'sweetalert2';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { passwordValidator } from '../../../shared/validators/password.validator';
+import { matchPasswordValidator } from '../../../shared/validators/match-password.validator';
+
+const passwordErrorMessages: Record<string, string> = {
+  uppercase: 'Must contain uppercase letter',
+  number: 'Must contain number',
+  special: 'Must contain special character',
+  minlength: 'Minimum 6 characters'
+};
 
 @Component({
   selector: 'app-register',
@@ -21,6 +30,7 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
+
 export class Register {
   form: FormGroup;
 
@@ -31,18 +41,12 @@ export class Register {
       {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        email: ['', Validators.required, Validators.email],
+        email: ['', [Validators.required, Validators.email]],
         username: ['', Validators.required],
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern(/^(?=.*[A-Z])(?=.*\d).{6,}$/)
-          ]
-        ],
-        confirmPassword: ['', Validators.required]
+        password: ['', [Validators.required, passwordValidator()]],
+        confirmPassword: ['', [Validators.required, passwordValidator()]]
       },
-      { validators: this.passwordMatchValidator },
+      { validators: matchPasswordValidator() },
     );
 
     this.form.valueChanges.subscribe(() => {
@@ -50,40 +54,27 @@ export class Register {
     });
   }
 
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const pwd = control.get('password')?.value;
-    const confirm = control.get('confirmPassword')?.value;
-
-    return pwd && confirm && pwd !== confirm
-      ? { mismatch: true }
-      : null;
-  }
-
   getFieldError(field: string): string | null {
-  const control = this.form.get(field);
+    const control = this.form.get(field);
 
-  if (!control || !(control.touched || control.dirty)) {
+    if (!control || !control.errors || !(control.dirty || control.touched)) {
+      return null;
+    }
+
+    const errors = control.errors;
+
+    if (errors['required']) {
+      return this.i18n.get('formErrors.required');
+    }
+
+    for (const key of Object.keys(errors)) {
+      if (passwordErrorMessages[key]) {
+        return passwordErrorMessages[key];
+      }
+    }
+
     return null;
   }
-
-  if (control.hasError('required')) {
-    return this.i18n.get('formErrors.required');
-  }
-
-  if (field === 'password' && control.hasError('pattern')) {
-    return this.i18n.get('formErrors.password');
-  }
-
-  if (
-    field === 'confirmPassword' &&
-    this.form.hasError('mismatch') &&
-    control.touched
-  ) {
-    return this.i18n.get('formErrors.passwordMissmatch');
-  }
-
-  return null;
-}
 
   submit() {
     if (this.form.invalid) {
@@ -108,12 +99,21 @@ export class Register {
       },
 
       error: (err) => {
+        const errors = err.error?.errors;
+
+        const message = Array.isArray(errors)
+          ? errors.join('\n')
+          : this.i18n.get('messages.registerError');
+
         Swal.fire({
           icon: 'error',
           title: this.i18n.get('messages.error'),
-          text: err.error || this.i18n.get('messages.registerError')
+          text: message
         });
       }
     });
   }
+
+
+
 }

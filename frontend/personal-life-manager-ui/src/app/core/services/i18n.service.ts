@@ -7,14 +7,29 @@ import { HR_STRINGS } from '../i18n/hr';
 })
 export class I18nService {
   private currentLang: 'en' | 'hr' = 'en';
-    private strings = EN_STRINGS;
+  private strings = EN_STRINGS;
 
-    setLanguage(lang: 'en' | 'hr') {
-        this.currentLang = lang;
-        this.strings = lang === 'en' ? EN_STRINGS : HR_STRINGS;
-    }
+  setLanguage(lang: 'en' | 'hr') {
+    this.currentLang = lang;
+    this.strings = lang === 'en' ? EN_STRINGS : HR_STRINGS;
+  }
 
   get(key: string): string {
-    return key.split('.').reduce((acc: any, k: string) => acc[k], this.strings) || '';
+
+    return key
+      .split('.')
+      .reduce((acc: unknown, k: string) => {
+
+        if (
+          acc &&
+          typeof acc === 'object' &&
+          k in acc
+        ) {
+          return (acc as Record<string, unknown>)[k];
+        }
+
+        return '';
+
+      }, this.strings) as string || '';
   }
 }

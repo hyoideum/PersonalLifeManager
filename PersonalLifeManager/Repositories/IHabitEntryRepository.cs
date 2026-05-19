@@ -18,4 +18,7 @@ public interface IHabitEntryRepository : IRepository<HabitEntry>
     Task<List<HabitStatsDto>> GetHabitStatsAsync(string userId, DateOnly from, DateOnly to);
     Task<int> CountCompletedForDayAsync(string userId, DateOnly date);
     Task<List<DateOnly>> GetCompletedDatesAsync(string userId);
+    Task<List<HabitEntry>> GetEntriesForUserAsync(string userId, DateOnly from, DateOnly to);
+    Task<int> GetActiveHabitsCountAsync(string userId);
+    Task<List<Habit>> GetHabitsWithEntriesAsync(string userId);
 }

@@ -13,9 +13,9 @@ export class DashboardService {
   constructor(private http: HttpClient) {}
 
   getDashboard(from?: string, to?: string): Observable<DashboardModel> {
-    let params: any = {};
-    if (from) params.from = from;
-    if (to) params.to = to;
+    let params: Record<string, string> = {};
+    if (from) params['from'] = from;
+    if (to) params['to'] = to;
     return this.http.get<DashboardModel>(`${this.apiUrl}/dashboard`, { params });
   }
 }

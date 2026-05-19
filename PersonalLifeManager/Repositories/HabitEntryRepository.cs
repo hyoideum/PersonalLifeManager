@@ -15,7 +15,7 @@ public class HabitEntryRepository(AppDbContext context) : Repository<HabitEntry>
 
         if (from.HasValue && from.Value > DateOnly.MinValue)
         {
-            entries = entries.Where(e => e.Date >= to);
+            entries = entries.Where(e => e.Date >= from);
         }
 
         if (to.HasValue && to.Value > DateOnly.MinValue)
@@ -55,8 +55,7 @@ public class HabitEntryRepository(AppDbContext context) : Repository<HabitEntry>
     public async Task<List<DailyHabitOverviewDto>> GetDailyOverviewAsync(string userId, DateOnly date)
     {
         return await _context.Habits
-            .Where(h => h.UserId == userId && !h.IsDeleted )
-               // && h.Entries.Any(e => e.Date == date)
+            .Where(h => h.UserId == userId && !h.IsDeleted)
             .Select(h => new DailyHabitOverviewDto
             {
                 HabitId = h.Id,
@@ -100,12 +99,12 @@ public class HabitEntryRepository(AppDbContext context) : Repository<HabitEntry>
             .Select(e => e.Date)
             .ToListAsync();
     }
-    
+
     public async Task<int> CountActiveHabitsAsync(string userId)
     {
         return await _context.Habits.CountAsync(h => h.UserId == userId && !h.IsDeleted);
     }
-    
+
     public async Task<int> CountEntriesAsync(string userId, DateOnly from, DateOnly to)
     {
         return await _context.HabitEntries
@@ -121,6 +120,9 @@ public class HabitEntryRepository(AppDbContext context) : Repository<HabitEntry>
         DateOnly from,
         DateOnly to)
     {
+        var totalHabits = await _context.Habits
+            .CountAsync(h => h.UserId == userId && !h.IsDeleted);
+
         return await _context.HabitEntries
             .Where(e =>
                 e.UserId == userId &&
@@ -131,11 +133,12 @@ public class HabitEntryRepository(AppDbContext context) : Repository<HabitEntry>
             .Select(g => new CalendarHeatmapDto
             {
                 Date = g.Key,
-                Count = g.Count()
+                Count = g.Count(),
+                Total = totalHabits
             })
             .ToListAsync();
     }
-    
+
     public async Task<List<HabitStatsDto>> GetHabitStatsAsync(string userId, DateOnly from, DateOnly to)
     {
         return await _context.Habits
@@ -171,6 +174,35 @@ public class HabitEntryRepository(AppDbContext context) : Repository<HabitEntry>
             .Select(e => e.Date)
             .Distinct()
             .OrderByDescending(d => d)
+            .ToListAsync();
+    }
+
+    public async Task<List<HabitEntry>> GetEntriesForUserAsync(string userId, DateOnly from, DateOnly to)
+    {
+        return await _context.HabitEntries
+            .Where(e =>
+                e.UserId == userId &&
+                e.Date >= from &&
+                e.Date <= to)
+            .ToListAsync();
+    }
+    
+    public async Task<int> GetActiveHabitsCountAsync(string userId)
+    {
+        return await _context.Habits
+            .Where(h =>
+                h.UserId == userId &&
+                !h.IsDeleted)
+            .CountAsync();
+    }
+
+    public async Task<List<Habit>> GetHabitsWithEntriesAsync(string userId)
+    {
+        return await _context.Habits
+            .Include(h => h.Entries)
+            .Where(h =>
+                h.UserId == userId &&
+                !h.IsDeleted)
             .ToListAsync();
     }
 }

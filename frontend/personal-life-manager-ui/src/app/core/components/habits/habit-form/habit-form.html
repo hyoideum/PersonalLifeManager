@@ -7,12 +7,12 @@
   <form [formGroup]="form" (ngSubmit)="submit()" class="habit-form">
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Name</mat-label>
+      <mat-label>{{ i18n.get("habitsForm.name") }}</mat-label>
       <input matInput formControlName="name">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Description</mat-label>
+      <mat-label>{{ i18n.get("habitsForm.description") }}</mat-label>
       <textarea matInput formControlName="description" rows="2"></textarea>
     </mat-form-field>
 
@@ -23,7 +23,7 @@
 <mat-dialog-actions align="center">
 
   <button mat-button mat-dialog-close>
-    Cancel
+    {{ i18n.get("habitsForm.cancel") }}
   </button>
 
   <button
@@ -32,7 +32,7 @@
     (click)="submit()"
     [disabled]="form.invalid">
 
-    Save
+    {{ i18n.get("habitsForm.save") }}
 
   </button>
 

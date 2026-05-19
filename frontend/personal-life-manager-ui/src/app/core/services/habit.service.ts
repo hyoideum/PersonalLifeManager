@@ -3,12 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Habit } from '../models/habit.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { HabitStatistics } from '../models/habit.statistics.model';
 
 @Injectable({ providedIn: 'root' })
 export class HabitService {
     private habitsApiUrl = `${environment.apiUrl}/habit`;
-    private entryApiUrl = `${environment.apiUrl}/habitEntry`;
 
     constructor(private http: HttpClient) { }
 

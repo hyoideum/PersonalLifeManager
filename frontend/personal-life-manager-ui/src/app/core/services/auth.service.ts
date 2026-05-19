@@ -20,6 +20,10 @@ export interface RefreshResponse {
   refreshToken: string;
 }
 
+interface JwtPayload {
+  exp?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = environment.apiUrl + "/auth";
@@ -27,25 +31,29 @@ export class AuthService {
   private readonly REFRESH_KEY = 'refreshToken';
   currentUser = signal<string | null>(null);
   isBrowser = false;
-  private logoutTimer: any;
+  private logoutTimer: ReturnType<typeof setTimeout> | undefined;;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId)
 
     if (this.isBrowser) {
+
       const token = localStorage.getItem(this.TOKEN_KEY);
 
-      if (token) {
+      if (token && !this.isTokenExpired(token)) {
+
         this.currentUser.set(token);
         this.startAutoRefresh(token);
+
+      } else {
+
+        this.logout();
       }
     }
   }
 
   get token(): string | null {
     return this.currentUser();
-    if (!this.isBrowser) return null;
-    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   register(data: LoginRequest): Observable<void> {
@@ -60,7 +68,6 @@ export class AuthService {
           this.currentUser.set(response.accessToken);
           localStorage.setItem(this.REFRESH_KEY, response.refreshToken);
           this.startAutoRefresh(response.accessToken);
-          // this.router.navigate(['/dashboard']);
         }
       })
     );
@@ -72,24 +79,28 @@ export class AuthService {
   }
 
   logout() {
+    this.currentUser.set(null);
+
     if (this.isBrowser) {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.REFRESH_KEY);
     }
-    // this.router.navigate(['auth/login']);
   }
 
   isLoggedIn(): boolean {
+
     if (!this.isBrowser) return false;
 
     const token = localStorage.getItem(this.TOKEN_KEY);
 
-    return !!token;
+    if (!token) return false;
+
+    return !this.isTokenExpired(token);
   }
 
   isTokenExpired(token: string): boolean {
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded: JwtPayload = jwtDecode(token);
 
       if (!decoded.exp) return true;
 
@@ -102,7 +113,7 @@ export class AuthService {
   }
 
   startAutoRefresh(token: string) {
-    const decoded: any = jwtDecode(token);
+    const decoded: JwtPayload = jwtDecode(token);
 
     if (!decoded.exp) return;
 

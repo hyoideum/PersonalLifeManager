@@ -1,14 +1,16 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
-  const authService = inject(AuthService);
+  const injector = inject(Injector);
   const router = inject(Router);
-  const token = authService.token;
+
+  const token = localStorage.getItem('token');
+
   let clonedReq = req;
 
   if (req.url.includes('/refresh')) {
@@ -28,20 +30,31 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status === 401 && token) {
 
+        const authService = injector.get(AuthService);
+
         return authService.refreshToken().pipe(
           switchMap(() => {
-            const newToken = authService.token;
+
+            const newToken = localStorage.getItem('token');
+
             const retryReq = req.clone({
-              setHeaders: { Authorization: `Bearer ${newToken}` }
+              setHeaders: {
+                Authorization: `Bearer ${newToken}`
+              }
             });
+
             return next(retryReq);
           }),
           catchError(() => {
+
             authService.logout();
+            router.navigate(['/auth/login']);
+
             return throwError(() => error);
           })
         );
       }
+
       return throwError(() => error);
     })
   );

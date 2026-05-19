@@ -13,8 +13,14 @@ public class DashboardService (IHabitService habitService, IHabitEntryService ha
         var globalStats =
             await habitEntryService.GetGlobalStatisticsAsync(userId, from, to);
 
+        var weeklyStats = await habitEntryService.GetWeeklyAnalyticsAsync(userId);
+
         var (best, worst) =
             await habitEntryService.GetBestAndWorstHabitAsync(userId, from, to);
+        
+        var mostConsistentHabit = await habitEntryService.GetMostConsistentHabitAsync(userId);
+
+        var heatmap = await habitEntryService.GetHeatmapAsync(userId, from.AddDays(-179), to);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
@@ -26,15 +32,21 @@ public class DashboardService (IHabitService habitService, IHabitEntryService ha
 
         var currentStreak =
             await habitEntryService.GetCurrentStreakAsync(userId, today);
-
+        
+        var longestStreak = await habitEntryService.GetLongestStreakAsync(userId);
+        
         return new DashboardDto
         {
             GlobalStatistics = globalStats,
+            WeeklyAnalytics = weeklyStats,
             BestHabits = best,
             WorstHabits = worst,
+            MostConsistentHabit =  mostConsistentHabit,
+            Heatmap = heatmap,
             TodayCompleted = todayCompleted,
             TotalHabits = totalHabits,
-            CurrentStreak = currentStreak
+            CurrentStreak = currentStreak,
+            LongestStreak = longestStreak
         };
     }
 }

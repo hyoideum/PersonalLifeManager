@@ -18,9 +18,9 @@
 mat-sidenav {
   width: 220px;
   display: flex;
-  flex-direction: column; /* stavlja djecu jedno ispod drugog */
+  flex-direction: column;
   padding: 16px;
-  gap: 12px; /* razmak između dugmadi */
+  gap: 12px;
 }
 
 mat-sidenav .logo {
@@ -28,6 +28,6 @@ mat-sidenav .logo {
 }
 
 mat-sidenav button {
-  justify-content: flex-start; /* ikona + tekst lijevo */
+  justify-content: flex-start;
   text-align: left;
 }

@@ -25,7 +25,11 @@ export class HabitEntryService {
     );
   }
 
-  getStatistics(): Observable<HabitStatistics[]> {
-    return this.http.get<HabitStatistics[]>(`${this.entryApiUrl}/statistics/all`);
+  getStatistics(day?: string, from?: string, to?: string): Observable<HabitStatistics[]> {
+    let params: Record<string, string> = {};
+    if (from) params['from'] = from;
+    if (to) params['to'] = to;
+    if (day) params['day'] = day;
+    return this.http.get<HabitStatistics[]>(`${this.entryApiUrl}/statistics/all`, {params});
   }
 }

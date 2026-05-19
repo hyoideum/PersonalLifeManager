@@ -1,0 +1,83 @@
+<div class="heatmap-container">
+    <div class="heatmap-wrapper">
+
+        <div class="months">
+            @for (month of months; track $index) {
+            <span class="month" [style.gridColumnStart]="month.column + 1">
+                {{ month.name }}
+            </span>
+            }
+        </div>
+
+        <div class="heatmap-body">
+            <div class="days">
+                <span>{{ i18n.get('heatmap.monday') }}</span>
+                <span>{{ i18n.get('heatmap.tuesday') }}</span>
+                <span>{{ i18n.get('heatmap.wednesday') }}</span>
+                <span>{{ i18n.get('heatmap.thursday') }}</span>
+                <span>{{ i18n.get('heatmap.friday') }}</span>
+                <span>{{ i18n.get('heatmap.saturday') }}</span>
+                <span>{{ i18n.get('heatmap.sunday') }}</span>
+            </div>
+
+            <div class="heatmap-grid">
+                @for (day of heatmap$ | async; track $index) {
+                <div class="heatmap-cell"  [class.active]="day.date === selectedDay?.date" [style.background]="getColor(day.count, day.total)" [title]="getTooltip(day)"
+                    (click)="onDayClick(day)">
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="legend">
+            <span>{{ i18n.get('heatmap.less') }}</span>
+            <div class="box" style="background:#ebedf0"></div>
+            <div class="box" style="background:#c6e48b"></div>
+            <div class="box" style="background:#7bc96f"></div>
+            <div class="box" style="background:#239a3b"></div>
+            <div class="box" style="background:#196127"></div>
+            <span>{{ i18n.get('heatmap.more') }}</span>
+        </div>
+    </div>
+</div>
+
+@if (selectedDay) {
+<div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+        <h3>{{ i18n.get('habits.date') }}: {{ selectedDay.date | date:'dd-MM-yyyy' }}</h3>
+
+        <p>
+           {{ i18n.get('habits.habitsCompleted') }}: {{ selectedDay.count }} / {{ selectedDay.total }}
+        </p>
+
+        <div class="habit-list">
+            @for (habit of dayDetails; track $index) {
+            <div class="habit-item">
+                <span class="habit-name">{{habit.habitName}}</span>
+                @if(habit.isCompleted) {
+                <span class="status done" (click)="toggleHabit(habit)">
+                    ✔
+                </span>
+                }
+                @else {
+                <span class="status not-done" (click)="toggleHabit(habit)">
+                    ✖
+                </span>
+                }
+            </div>
+            }
+        </div>
+
+        <div class="date-nav">
+            <button (click)="prevDay()">⬅</button>
+            <span>
+                {{ selectedDay?.date | date:'dd.MM.yyyy' }}
+            </span>
+            <button (click)="nextDay()" [disabled]="isToday(selectedDay.date)">➡</button>
+        </div>
+
+        <button (click)="closeModal()">Close</button>
+    </div>
+</div>
+}

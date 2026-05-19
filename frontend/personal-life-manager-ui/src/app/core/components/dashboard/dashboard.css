@@ -1,18 +1,43 @@
 .dashboard-container {
   padding: 24px;
-}
-
-.card {
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .habit-stats {
-  display: flex;
-  gap: 24px;        /* razmak između Best i Worst */
-  flex-wrap: wrap;  /* da se lijepo prelama na manjim ekranima */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
 }
 
-.habit-stats .card {
-  flex: 1;          /* da zauzmu jednaku širinu */
-  min-width: 280px; /* da ne postanu premale */
+.card {
+  border-radius: 16px;
+  padding: 8px 4px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.quick-stats p {
+  margin: 0;
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
 }

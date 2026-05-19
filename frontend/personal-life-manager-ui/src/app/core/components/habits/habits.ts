@@ -10,7 +10,7 @@ import { HabitFormComponent } from './habit-form/habit-form';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { HabitEntryService } from '../../services/habit-entry.service';
-import { HabitStore } from '../../stores/habits.store';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-habits',
@@ -20,41 +20,22 @@ import { HabitStore } from '../../stores/habits.store';
 })
 export class Habits {
   habitsWithStatistics = signal<HabitStatistics[]>([]);
+  currentDate: string = new Date().toISOString().split('T')[0];
+  habits: Habit[] = [];
 
   constructor(private habitsService: HabitService, private dialog: MatDialog, private habitEntryService: HabitEntryService,
-    private store: HabitStore) { }
+    public i18n: I18nService) { }
 
   ngOnInit() {
-    // this.loadHabits();
+    this.currentDate = new Date().toISOString().split('T')[0];
     this.loadStatistics();
   }
 
-  // loadHabits() {
-  //   this.habitsService.getHabits().subscribe(h => this.habits.set(h));
-  // }
-
   loadStatistics() {
-    this.habitEntryService.getStatistics().subscribe(data => {
+    this.habitEntryService.getStatistics(this.currentDate).subscribe(data => {
       this.habitsWithStatistics.set(data);
     });
   }
-
-  // addHabit() {
-  //   const dialogRef = this.dialog.open(HabitFormComponent);
-  //   dialogRef.componentInstance.save.subscribe((habit: Partial<Habit>) => {
-  //     this.habitsService.addHabit(habit).subscribe(() => this.loadHabits());
-  //     dialogRef.close();
-  //   });
-  // }
-
-  // editHabit(habit: HabitStatistics) {
-  //   const dialogRef = this.dialog.open(HabitFormComponent);
-  //   dialogRef.componentInstance.habit = habit;
-  //   dialogRef.componentInstance.save.subscribe((updated: Partial<Habit>) => {
-  //     this.habitsService.updateHabit(habit.habitId, updated).subscribe(() => this.loadStatistics());
-  //     dialogRef.close();
-  //   });
-  // }
 
   addHabit() {
     const dialogRef = this.dialog.open(HabitFormComponent, {
@@ -90,14 +71,33 @@ export class Habits {
   }
 
   toggleToday(habit: HabitStatistics) {
-    const today = new Date().toISOString().split('T')[0];
     this.habitEntryService
-      .toggleHabit(habit.habitId, today)
+      .toggleHabit(habit.habitId, this.currentDate)
       .subscribe({
         next: () => {
           this.loadStatistics();
         },
         error: err => console.error(err)
       });
+  }
+
+  prevDay() {
+    const d = new Date(this.currentDate);
+    d.setDate(d.getDate() - 1);
+    this.currentDate = d.toISOString().split('T')[0];
+
+    this.loadStatistics();
+  }
+
+  nextDay() {
+    const today = new Date().toISOString().split('T')[0];
+
+    if (this.currentDate >= today) return;
+
+    const d = new Date(this.currentDate);
+    d.setDate(d.getDate() + 1);
+    this.currentDate = d.toISOString().split('T')[0];
+
+    this.loadStatistics();
   }
 }

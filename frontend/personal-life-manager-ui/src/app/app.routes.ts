@@ -22,7 +22,6 @@ export const routes: Routes = [
       }
     ]
   },
-
   {
     path: '',
     component: MainLayout,
@@ -44,7 +43,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./core/components/habits/habits')
             .then(m => m.Habits)
-      }
+      },
     ]
   },
   {
