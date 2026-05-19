@@ -59,12 +59,17 @@ The project follows a clean separation of concerns to ensure maintainability and
 
 ## 📸 Screenshots
 
-> Add screenshots here (recommended for portfolio)
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
 
-- Dashboard overview
-- Heatmap calendar
-- Habit list view
-- Add/Edit habit modal
+### Habits
+![Habits](docs/screenshots/habits.png)
+
+### Statistics
+![Heatmap](docs/screenshots/statistics.png)
+
+### Toggle Habit Modal
+![Add Habit](docs/screenshots/toggle-habit-modal.png)
 
 ---
 
