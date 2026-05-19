@@ -77,14 +77,12 @@ The project follows a clean separation of concerns to ensure maintainability and
 
 ### Backend
 
-```bash
 dotnet run
 
 Make sure PostgreSQL is running and connection string is configured in appsettings.json.
 
 ### Frontend
 
-```bash
 npm install
 ng serve
 
