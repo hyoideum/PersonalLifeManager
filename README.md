@@ -89,12 +89,12 @@ ng serve
 Frontend runs on http://localhost:4200
 
 ### Future Improvements
-Skeleton loading UI improvements
-Habit reminders / notifications
-Mobile responsiveness polish
-Export statistics (PDF/CSV)
-Habit categories and tags
-Dark mode refinement
+- Skeleton loading UI improvements
+- Habit reminders / notifications
+- Mobile responsiveness polish
+- Export statistics (PDF/CSV)
+- Habit categories and tags
+- Dark mode refinement
 
 ### Author
 
