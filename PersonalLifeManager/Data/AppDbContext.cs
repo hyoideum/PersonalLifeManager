@@ -12,14 +12,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         builder.Entity<Habit>()
             .HasQueryFilter(h => !h.IsDeleted);
-        
+
         builder.Entity<HabitEntry>()
             .HasIndex(e => new { e.UserId, e.HabitId, e.Date })
             .IsUnique();
-        
-        builder.Entity<RefreshToken>().HasIndex(t => t.Token).IsUnique();
-        base.OnModelCreating(builder);
+
+        builder.Entity<RefreshToken>()
+            .HasIndex(t => t.Token)
+            .IsUnique();
     }
+    
     public DbSet<Habit> Habits { get; set; }
     public DbSet<HabitEntry> HabitEntries { get; set; }
     

@@ -178,16 +178,6 @@ using (var scope = app.Services.CreateScope())
     await IdentitySeeder.SeedAsync(userManager, roleManager);
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    var context =
-        services.GetRequiredService<AppDbContext>();
-
-    await context.Database.MigrateAsync();
-}
-
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
