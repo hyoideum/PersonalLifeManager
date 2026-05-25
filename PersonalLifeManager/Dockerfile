@@ -13,4 +13,4 @@ COPY --from=build /app/publish .
 
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "PersonalLifeManager.Api.dll"]
+ENTRYPOINT ["dotnet", "PersonalLifeManager.dll"]
