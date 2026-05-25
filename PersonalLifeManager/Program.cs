@@ -150,14 +150,42 @@ app.MapGet("/weatherforecast", () =>
     .WithName("GetWeatherForecast")
     .WithOpenApi();
 
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//
+//     var userManager = services.GetRequiredService<UserManager<AppUser>>();
+//     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+//
+//     await IdentitySeeder.SeedAsync(userManager, roleManager);
+// }
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+    var context =
+        services.GetRequiredService<AppDbContext>();
+
+    await context.Database.MigrateAsync();
+
+    var userManager =
+        services.GetRequiredService<UserManager<AppUser>>();
+
+    var roleManager =
+        services.GetRequiredService<RoleManager<AppRole>>();
 
     await IdentitySeeder.SeedAsync(userManager, roleManager);
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context =
+        services.GetRequiredService<AppDbContext>();
+
+    await context.Database.MigrateAsync();
 }
 
 app.Run();
