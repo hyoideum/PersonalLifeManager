@@ -179,6 +179,21 @@ app.MapGet("/weatherforecast", () =>
 //     await IdentitySeeder.SeedAsync(userManager, roleManager);
 // }
 
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    try
+    {
+        var canConnect = await context.Database.CanConnectAsync();
+        Console.WriteLine($"DATABASE CONNECTED: {canConnect}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"DATABASE ERROR: {ex.Message}");
+    }
+}
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
