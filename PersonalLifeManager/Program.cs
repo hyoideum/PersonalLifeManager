@@ -161,24 +161,6 @@ app.MapGet("/weatherforecast", () =>
 //     await IdentitySeeder.SeedAsync(userManager, roleManager);
 // }
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//
-//     var context =
-//         services.GetRequiredService<AppDbContext>();
-//
-//     await context.Database.MigrateAsync();
-//
-//     var userManager =
-//         services.GetRequiredService<UserManager<AppUser>>();
-//
-//     var roleManager =
-//         services.GetRequiredService<RoleManager<AppRole>>();
-//
-//     await IdentitySeeder.SeedAsync(userManager, roleManager);
-// }
-
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -191,6 +173,35 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"DATABASE ERROR: {ex.Message}");
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+
+        Console.WriteLine("Starting database migration...");
+
+        await context.Database.MigrateAsync();
+
+        Console.WriteLine("Database migration completed.");
+
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+
+        Console.WriteLine("Starting identity seeding...");
+
+        await IdentitySeeder.SeedAsync(userManager, roleManager);
+
+        Console.WriteLine("Identity seeding completed.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"DATABASE STARTUP ERROR: {ex}");
     }
 }
 
