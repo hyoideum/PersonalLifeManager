@@ -35,9 +35,11 @@ builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(8080);
+    serverOptions.ListenAnyIP(int.Parse(port));
 });
 
 builder.Services.AddAuthentication(options =>
@@ -117,13 +119,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 var app = builder.Build();
 
 app.UseRouting();
+app.UseCors("AllowAngular");
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseCors("AllowAngular");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
