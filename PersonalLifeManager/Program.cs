@@ -176,34 +176,34 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    try
-    {
-        var context = services.GetRequiredService<AppDbContext>();
-
-        Console.WriteLine("Starting database migration...");
-
-        await context.Database.MigrateAsync();
-
-        Console.WriteLine("Database migration completed.");
-
-        var userManager = services.GetRequiredService<UserManager<AppUser>>();
-        var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-
-        Console.WriteLine("Starting identity seeding...");
-
-        await IdentitySeeder.SeedAsync(userManager, roleManager);
-
-        Console.WriteLine("Identity seeding completed.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"DATABASE STARTUP ERROR: {ex}");
-    }
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//
+//     try
+//     {
+//         var context = services.GetRequiredService<AppDbContext>();
+//
+//         Console.WriteLine("Starting database migration...");
+//
+//         await context.Database.MigrateAsync();
+//
+//         Console.WriteLine("Database migration completed.");
+//
+//         var userManager = services.GetRequiredService<UserManager<AppUser>>();
+//         var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+//
+//         Console.WriteLine("Starting identity seeding...");
+//
+//         await IdentitySeeder.SeedAsync(userManager, roleManager);
+//
+//         Console.WriteLine("Identity seeding completed.");
+//     }
+//     catch (Exception ex)
+//     {
+//         Console.WriteLine($"DATABASE STARTUP ERROR: {ex}");
+//     }
+// }
 
 app.Urls.Add($"http://0.0.0.0:{port}");
 
