@@ -31,16 +31,59 @@ public class AuthService(UserManager<AppUser> userManager, IRefreshTokenService 
         return (user, Enumerable.Empty<string>());
     }
 
+    // public async Task<AuthResponseDto> LoginAsync(UserDto.LoginDto userDto)
+    // {
+    //     var user = await userManager.FindByNameAsync(userDto.Username);
+    //
+    //     if (user == null || !await userManager.CheckPasswordAsync(user, userDto.Password))
+    //         throw new UnauthorizedAccessException("Invalid credentials");
+    //     
+    //     var token = tokenService.CreateToken(user);
+    //     var refreshToken = await refreshTokenService.CreateAsync(user.Id);
+    //     
+    //     return new AuthResponseDto
+    //     {
+    //         AccessToken = token,
+    //         RefreshToken = refreshToken
+    //     };
+    // }
+    
     public async Task<AuthResponseDto> LoginAsync(UserDto.LoginDto userDto)
     {
+        Console.WriteLine("LOGIN STEP 1");
+
         var user = await userManager.FindByNameAsync(userDto.Username);
 
-        if (user == null || !await userManager.CheckPasswordAsync(user, userDto.Password))
+        Console.WriteLine("LOGIN STEP 2");
+
+        if (user == null)
+        {
+            Console.WriteLine("USER NOT FOUND");
             throw new UnauthorizedAccessException("Invalid credentials");
-        
+        }
+
+        var passwordValid =
+            await userManager.CheckPasswordAsync(user, userDto.Password);
+
+        Console.WriteLine("LOGIN STEP 3");
+
+        if (!passwordValid)
+        {
+            Console.WriteLine("INVALID PASSWORD");
+            throw new UnauthorizedAccessException("Invalid credentials");
+        }
+
+        Console.WriteLine("LOGIN STEP 4");
+
         var token = tokenService.CreateToken(user);
-        var refreshToken = await refreshTokenService.CreateAsync(user.Id);
-        
+
+        Console.WriteLine("LOGIN STEP 5");
+
+        var refreshToken =
+            await refreshTokenService.CreateAsync(user.Id);
+
+        Console.WriteLine("LOGIN STEP 6");
+
         return new AuthResponseDto
         {
             AccessToken = token,
