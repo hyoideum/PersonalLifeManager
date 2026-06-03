@@ -26,7 +26,7 @@ public class AuthService(UserManager<AppUser> userManager, IRefreshTokenService 
             return (null, errors);
         }
         
-        await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
+        // await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
 
         return (user, Enumerable.Empty<string>());
     }
