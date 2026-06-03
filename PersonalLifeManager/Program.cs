@@ -205,6 +205,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
