@@ -22,37 +22,15 @@ public class HabitService(IHabitRepository repository, IMapper mapper) : IHabitS
         return habit == null ? null : mapper.Map<HabitDto>(habit);
     }
 
-    // public async Task<HabitDto> CreateAsync(string userId, CreateHabitDto dto)
-    // {
-    //     var habit = mapper.Map<Habit>(dto);
-    //     habit.CreatedAt = DateTime.UtcNow;
-    //     habit.UserId = userId;
-    //
-    //     await repository.AddAsync(habit);
-    //     await repository.SaveChangesAsync();
-    //
-    //     return mapper.Map<HabitDto>(habit);
-    // }
-    
     public async Task<HabitDto> CreateAsync(string userId, CreateHabitDto dto)
     {
-        Console.WriteLine($"CREATE HABIT START {dto.Name}");
-
         var habit = mapper.Map<Habit>(dto);
-
         habit.CreatedAt = DateTime.UtcNow;
         habit.UserId = userId;
-
-        Console.WriteLine($"BEFORE ADD {dto.Name}");
-
+    
         await repository.AddAsync(habit);
-
-        Console.WriteLine($"BEFORE SAVE {dto.Name}");
-
         await repository.SaveChangesAsync();
-
-        Console.WriteLine($"AFTER SAVE {dto.Name}");
-
+    
         return mapper.Map<HabitDto>(habit);
     }
 
@@ -102,8 +80,6 @@ public class HabitService(IHabitRepository repository, IMapper mapper) : IHabitS
     
     public async Task SeedDefaultHabitsAsync(string userId)
     {
-        Console.WriteLine("SEED START");
-        
         var defaultHabits = new List<CreateHabitDto>
         {
             new() { Name = "Wake up early", Description = "Get up by 7am" },
@@ -120,14 +96,8 @@ public class HabitService(IHabitRepository repository, IMapper mapper) : IHabitS
 
         foreach (var habit in defaultHabits)
         {
-            Console.WriteLine($"CREATING {habit.Name}");
-            
             await CreateAsync(userId, habit);
-            
-            Console.WriteLine($"CREATED {habit.Name}");
         }
-        
-        Console.WriteLine("SEED END");
     }
 
     public async Task<int> CountActiveAsync(string userId)
