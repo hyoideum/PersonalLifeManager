@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:5237/api' 
+  production: true,
+  apiUrl: 'https://https://personallifemanager.onrender.com/api'
 };
