@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using PersonalLifeManager.Data;
 using PersonalLifeManager.DTOs;
 using PersonalLifeManager.Events;
 using PersonalLifeManager.Models;
@@ -42,28 +43,37 @@ public class AuthService(UserManager<AppUser> userManager, IRefreshTokenService 
             FirstName = dto.FirstName,
             LastName = dto.LastName,
         };
-
-        Console.WriteLine("REGISTER STEP 2");
-
-        var result = await userManager.CreateAsync(user, dto.Password);
-
-        Console.WriteLine("REGISTER STEP 3");
-
-        if (!result.Succeeded)
+        
+        try
         {
-            Console.WriteLine("REGISTER FAILED");
-
-            foreach (var error in result.Errors)
-            {
-                Console.WriteLine(error.Description);
-            }
-
-            return (null, result.Errors.Select(e => e.Description));
+            Console.WriteLine("BEFORE CREATE");
+            
+            var result = await userManager.CreateAsync(user, dto.Password);
+            
+            Console.WriteLine("AFTER CREATE");
+        } 
+        catch (Exception ex)
+        {
+            Console.WriteLine("CREATE EXCEPTION");
+            Console.WriteLine(ex.ToString());
         }
+
+
+        // if (!result.Succeeded)
+        // {
+        //     Console.WriteLine("REGISTER FAILED");
+        //
+        //     foreach (var error in result.Errors)
+        //     {
+        //         Console.WriteLine(error.Description);
+        //     }
+        //
+        //     return (null, result.Errors.Select(e => e.Description));
+        // }
 
         Console.WriteLine("REGISTER STEP 4");
 
-        await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
+        // await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
 
         Console.WriteLine("REGISTER STEP 5");
 
