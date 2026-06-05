@@ -12,6 +12,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         builder.Entity<Habit>()
             .HasQueryFilter(h => !h.IsDeleted);
+        
+        builder.Entity<Habit>()
+            .HasOne(h => h.AppUser)
+            .WithMany()
+            .HasForeignKey(h => h.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<HabitEntry>()
             .HasIndex(e => new { e.UserId, e.HabitId, e.Date })
