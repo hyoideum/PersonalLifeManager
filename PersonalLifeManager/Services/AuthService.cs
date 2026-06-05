@@ -8,8 +8,33 @@ namespace PersonalLifeManager.Services;
 public class AuthService(UserManager<AppUser> userManager, IRefreshTokenService refreshTokenService, ITokenService tokenService,
     IEventDispatcher eventDispatcher) : IAuthService
 {
+    // public async Task<(AppUser?, IEnumerable<string> Errors)> RegisterAsync(UserDto.RegisterDto dto)
+    // {
+    //     var user = new AppUser
+    //     {
+    //         UserName = dto.Username,
+    //         Email = dto.Email,
+    //         FirstName = dto.FirstName,
+    //         LastName = dto.LastName,
+    //     };
+    //
+    //     var result = await userManager.CreateAsync(user, dto.Password);
+    //
+    //     if (!result.Succeeded)
+    //     {
+    //         var errors = result.Errors.Select(e => e.Description);
+    //         return (null, errors);
+    //     }
+    //     
+    //     // await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
+    //
+    //     return (user, Enumerable.Empty<string>());
+    // }
+    
     public async Task<(AppUser?, IEnumerable<string> Errors)> RegisterAsync(UserDto.RegisterDto dto)
     {
+        Console.WriteLine("REGISTER STEP 1");
+
         var user = new AppUser
         {
             UserName = dto.Username,
@@ -18,15 +43,29 @@ public class AuthService(UserManager<AppUser> userManager, IRefreshTokenService 
             LastName = dto.LastName,
         };
 
+        Console.WriteLine("REGISTER STEP 2");
+
         var result = await userManager.CreateAsync(user, dto.Password);
+
+        Console.WriteLine("REGISTER STEP 3");
 
         if (!result.Succeeded)
         {
-            var errors = result.Errors.Select(e => e.Description);
-            return (null, errors);
+            Console.WriteLine("REGISTER FAILED");
+
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+
+            return (null, result.Errors.Select(e => e.Description));
         }
-        
-        // await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
+
+        Console.WriteLine("REGISTER STEP 4");
+
+        await eventDispatcher.Dispatch(new UserRegisteredEvent(user.Id));
+
+        Console.WriteLine("REGISTER STEP 5");
 
         return (user, Enumerable.Empty<string>());
     }
