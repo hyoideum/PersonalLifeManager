@@ -76,7 +76,6 @@ builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
 builder.Services.AddScoped<IEventHandler<UserRegisteredEvent>, UserRegisteredHandler>();
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -150,6 +149,13 @@ app.MapGet("/weatherforecast", () =>
 
 using (var scope = app.Services.CreateScope())
 {
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    await context.Database.MigrateAsync();
+}
+
+using (var scope = app.Services.CreateScope())
+{
     var services = scope.ServiceProvider;
 
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
@@ -157,52 +163,6 @@ using (var scope = app.Services.CreateScope())
 
     await IdentitySeeder.SeedAsync(userManager, roleManager);
 }
-
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    try
-    {
-        var canConnect = await context.Database.CanConnectAsync();
-        Console.WriteLine($"DATABASE CONNECTED: {canConnect}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"DATABASE ERROR: {ex.Message}");
-    }
-}
-
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//
-//     try
-//     {
-//         var context = services.GetRequiredService<AppDbContext>();
-//
-//         Console.WriteLine("Starting database migration...");
-//
-//         await context.Database.MigrateAsync();
-//
-//         Console.WriteLine("Database migration completed.");
-//
-//         var userManager = services.GetRequiredService<UserManager<AppUser>>();
-//         var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-//
-//         Console.WriteLine("Starting identity seeding...");
-//
-//         await IdentitySeeder.SeedAsync(userManager, roleManager);
-//
-//         Console.WriteLine("Identity seeding completed.");
-//     }
-//     catch (Exception ex)
-//     {
-//         Console.WriteLine($"DATABASE STARTUP ERROR: {ex}");
-//     }
-// }
-
-app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
 
