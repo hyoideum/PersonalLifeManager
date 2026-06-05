@@ -102,6 +102,8 @@ public class HabitService(IHabitRepository repository, IMapper mapper) : IHabitS
     
     public async Task SeedDefaultHabitsAsync(string userId)
     {
+        Console.WriteLine("SEED START");
+        
         var defaultHabits = new List<CreateHabitDto>
         {
             new() { Name = "Wake up early", Description = "Get up by 7am" },
@@ -118,8 +120,14 @@ public class HabitService(IHabitRepository repository, IMapper mapper) : IHabitS
 
         foreach (var habit in defaultHabits)
         {
+            Console.WriteLine($"CREATING {habit.Name}");
+            
             await CreateAsync(userId, habit);
+            
+            Console.WriteLine($"CREATED {habit.Name}");
         }
+        
+        Console.WriteLine("SEED END");
     }
 
     public async Task<int> CountActiveAsync(string userId)
