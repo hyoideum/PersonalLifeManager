@@ -83,7 +83,7 @@
             <mat-card-content>
                 @if(dashboard()?.mostConsistentHabit) {
                 <p>{{ dashboard()?.mostConsistentHabit?.habitName }}</p>
-                <p>{{ i18n.get('dashboard.longestStreak') }}: {{ dashboard()?.mostConsistentHabit?.longestStreak }}%
+                <p>{{ i18n.get('dashboard.longestStreak') }} {{ dashboard()?.mostConsistentHabit?.longestStreak }}
                 </p>
                 }
                 @else {
