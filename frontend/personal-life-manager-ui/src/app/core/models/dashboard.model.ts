@@ -28,9 +28,7 @@ export interface WeeklyAnalytics {
 
 export interface MostConsistentHabit {
   habitName: string;
-  completedDays: number;
-  totalDays: number;
-  consistencyRate: number;
+  longestStreak: number;
 }
 
 export interface DashboardModel {

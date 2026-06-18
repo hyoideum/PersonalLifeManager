@@ -460,44 +460,50 @@ public class HabitEntryService(IHabitEntryRepository repository, IHabitRepositor
 
     public async Task<ConsistencyDto?> GetMostConsistentHabitAsync(string userId)
     {
-        var habits =
-            await repository.GetHabitsWithEntriesAsync(userId);
+        var habits = await repository.GetHabitsWithEntriesAsync(userId);
 
         if (!habits.Any())
             return null;
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-
         var result = habits
             .Select(h =>
             {
-                var created =
-                    DateOnly.FromDateTime(h.CreatedAt);
+                var dates = h.Entries
+                    .Where(e => !e.IsDeleted)
+                    .Select(e => e.Date)
+                    .OrderBy(d => d)
+                    .ToList();
 
-                var totalDays =
-                    today.DayNumber - created.DayNumber + 1;
+                var longestStreak = 0;
+                var currentStreak = 0;
+                DateOnly? previousDate = null;
 
-                var completedDays =
-                    h.Entries.Count(e => !e.IsDeleted);
+                foreach (var date in dates)
+                {
+                    if (previousDate == null)
+                    {
+                        currentStreak = 1;
+                    }
+                    else if (date.DayNumber - previousDate.Value.DayNumber == 1)
+                    {
+                        currentStreak++;
+                    }
+                    else
+                    {
+                        currentStreak = 1;
+                    }
 
-                var rate =
-                    totalDays == 0
-                        ? 0
-                        : (double)completedDays / totalDays * 100;
+                    longestStreak = Math.Max(longestStreak, currentStreak);
+                    previousDate = date;
+                }
 
                 return new ConsistencyDto
                 {
                     HabitName = h.Name,
-
-                    CompletedDays = completedDays,
-
-                    TotalDays = totalDays,
-
-                    ConsistencyRate = Math.Round(rate, 2)
+                    LongestStreak = longestStreak
                 };
             })
-            .OrderByDescending(x => x.ConsistencyRate)
-            .ThenByDescending(x => x.CompletedDays)
+            .OrderByDescending(x => x.LongestStreak)
             .FirstOrDefault();
 
         return result;
@@ -516,9 +522,11 @@ public class HabitEntryService(IHabitEntryRepository repository, IHabitRepositor
 
         foreach (var habit in habits)
         {
-            var completedDates = await repository.GetCompletedDatesAsync(habit.Id, userId, from, to);
-
-            var completedCount = completedDates.Count;
+            var completedCount = habit.Entries
+                .Where(e => !e.IsDeleted)
+                .Select(e => e.Date)
+                .Distinct()
+                .Count();
 
             var completionRate = totalDays == 0
                 ? 0

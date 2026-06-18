@@ -83,11 +83,8 @@
             <mat-card-content>
                 @if(dashboard()?.mostConsistentHabit) {
                 <p>{{ dashboard()?.mostConsistentHabit?.habitName }}</p>
-                <p>{{ i18n.get('dashboard.consistancyRate') }}: {{ dashboard()?.mostConsistentHabit?.consistencyRate }}%
+                <p>{{ i18n.get('dashboard.longestStreak') }}: {{ dashboard()?.mostConsistentHabit?.longestStreak }}%
                 </p>
-                <p>{{ i18n.get('dashboard.completed') }}: {{ dashboard()?.mostConsistentHabit?.completedDays }}
-                    /
-                    {{ dashboard()?.mostConsistentHabit?.totalDays }}</p>
                 }
                 @else {
                 <p>{{ i18n.get('dashboard.noData') }}</p>
