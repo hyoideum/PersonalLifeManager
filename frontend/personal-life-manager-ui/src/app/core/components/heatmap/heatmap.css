@@ -163,3 +163,12 @@ button:hover {
 .cdk-overlay-container {
   z-index: 99998 !important;
 }
+
+.status {
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.status:hover {
+  transform: scale(1.2);
+}
