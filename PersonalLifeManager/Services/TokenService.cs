@@ -25,7 +25,7 @@ public class TokenService(IConfiguration config) : ITokenService
             issuer: config["Jwt:Issuer"],
             audience: config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(double.Parse(config["Jwt:DurationInMinutes"])),
+            expires: DateTime.UtcNow.AddMinutes(double.Parse(config["Jwt:DurationInMinutes"])),
             signingCredentials: creds
         );
         

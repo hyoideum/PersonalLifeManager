@@ -19,7 +19,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
         policy => policy
-            .AllowAnyOrigin()
+            .WithOrigins(
+                "https://personal-life-manager-five.vercel.app"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -106,67 +108,37 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Events.OnRedirectToLogin = context =>
-    {
-        context.Response.StatusCode = 401;
-        return Task.CompletedTask;
-    };
-});
-
 var app = builder.Build();
 
-app.UseRouting();
 app.UseCors("AllowAngular");
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
-var summaries = new[]
+if (app.Environment.IsDevelopment())
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
-
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    await context.Database.MigrateAsync();
+    app.UseSwagger();
+    app.UseSwaggerUI(); 
 }
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
+    var context = services.GetRequiredService<AppDbContext>();
+
+    await context.Database.MigrateAsync();
+
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
-    await IdentitySeeder.SeedAsync(userManager, roleManager);
+    await IdentitySeeder.SeedAsync(
+        userManager,
+        roleManager);
 }
+
+app.MapGet("/health", () => Results.Ok("Healthy"));
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
