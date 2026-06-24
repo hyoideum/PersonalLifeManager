@@ -4,16 +4,26 @@ A full-stack habit tracking application that helps users build and maintain dail
 
 ---
 
-## 🚀 Tech Stack
+🌐 Live Demo
 
-### Backend
+🔗 Live Application: https://personal-life-manager-five.vercel.app
+
+The application is deployed and publicly available online.
+
+Note: The backend is hosted on Render's free tier. If the application has been inactive for some time, the first request may take 50+ seconds while the server wakes up. After startup, the application responds normally.
+
+---
+
+🚀 Tech Stack
+
+## Backend
 - .NET 8
 - Entity Framework Core
 - PostgreSQL
 - JWT Authentication
 - Clean architecture (Controller → Service → Repository)
 
-### Frontend
+## Frontend
 - Angular (Standalone components)
 - Angular Material
 - RxJS
@@ -21,7 +31,7 @@ A full-stack habit tracking application that helps users build and maintain dail
 
 ---
 
-## 📊 Features
+📊 Features
 
 - User registration and login (JWT authentication)
 - Secure password validation (custom rules)
@@ -40,14 +50,14 @@ A full-stack habit tracking application that helps users build and maintain dail
 
 ---
 
-## 🧠 Architecture Overview
+🧠 Architecture Overview
 
-### Backend Structure
+## Backend Structure
 - Controllers → API layer
 - Services → business logic layer
 - Repositories → data access layer
 
-### Frontend Structure
+## Frontend Structure
 - Components → UI layer
 - Services → API communication
 - Models → TypeScript models
@@ -57,38 +67,38 @@ The project follows a clean separation of concerns to ensure maintainability and
 
 ---
 
-## 📸 Screenshots
+📸 Screenshots
 
-### Dashboard
+## Dashboard
 ![Dashboard](docs/screenshots/dashboard.png)
 
-### Habits
+## Habits
 ![Habits](docs/screenshots/habits.png)
 
-### Statistics
+## Statistics
 ![Heatmap](docs/screenshots/statistics.png)
 
-### Toggle Habit Modal
+## Toggle Habit Modal
 ![Add Habit](docs/screenshots/toggle-habit-modal.png)
 
 ---
 
-## ⚙️ How to Run Locally
+⚙️ How to Run Locally
 
-### Backend
+## Backend
 
 dotnet run
 
 Make sure PostgreSQL is running and connection string is configured in appsettings.json.
 
-### Frontend
+## Frontend
 
 npm install
 ng serve
 
 Frontend runs on http://localhost:4200
 
-### Future Improvements
+## Future Improvements
 - Skeleton loading UI improvements
 - Habit reminders / notifications
 - Mobile responsiveness polish
@@ -96,6 +106,15 @@ Frontend runs on http://localhost:4200
 - Habit categories and tags
 - Dark mode refinement
 
-### Author
+## Author
 
-Built as a full-stack learning and portfolio project to demonstrate skills in .NET backend development and Angular frontend architecture.
+Built as a full-stack portfolio project to demonstrate practical experience with:
+
+* ASP.NET Core Web API
+* Angular
+* PostgreSQL
+* JWT Authentication
+* Entity Framework Core
+* Clean Architecture principles
+
+The project focuses on real-world application development, including authentication, data persistence, analytics, error handling, and production deployment.
